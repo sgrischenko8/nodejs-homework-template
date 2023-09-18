@@ -58,6 +58,7 @@ exports.throwError = (req, res, next) => {
   const { error } = createContactValidator.validate(req.body);
 
   if (error) {
+    console.log(error);
     const empty = error.details.find(
       (el) => el.type === "string.empty" || el.type === "any.required"
     );
@@ -69,6 +70,11 @@ exports.throwError = (req, res, next) => {
     if (error.details[0].type === "string.email") {
       return res.status(400).json({
         message: "email must be a valid",
+      });
+    } else {
+      const message = error.details.map((el) => el.message).join(". ");
+      return res.status(400).json({
+        message,
       });
     }
   }
