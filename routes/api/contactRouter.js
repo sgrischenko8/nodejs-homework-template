@@ -18,6 +18,11 @@ router
     contactMiddleware.throwError,
     contactController.updateContact
   )
+  .patch(
+    contactMiddleware.checkAbsenceBodyInPatch,
+    contactMiddleware.throwError,
+    contactController.updateStatusContact
+  )
   .delete(contactMiddleware.checkAbsenceBody, contactController.removeContact);
 
 module.exports = router;

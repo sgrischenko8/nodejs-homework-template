@@ -1,13 +1,14 @@
-const fs = require("fs/promises");
-const { nanoid } = require("nanoid");
+const {
+  createContactValidator,
+  updateContactStatusValidator,
+} = require("../utils/contactValidator");
 
-const { createContactValidator } = require("../utils/contactValidator");
-
-const { contactsPath } = require("../models/contacts");
+const Contact = require("../models/contactModel");
 
 exports.listContacts = async (req, res, next) => {
   try {
-    const contacts = JSON.parse(await fs.readFile(contactsPath));
+    const contacts = await Contact.find();
+
     res.status(200).json(contacts);
   } catch (error) {
     next(error);
@@ -18,10 +19,9 @@ exports.getById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const data = await JSON.parse(await fs.readFile(contactsPath));
-    const result = data.find((contact) => contact.id === id);
+    const contact = await Contact.findOne({ _id: id });
 
-    res.status(200).json(result);
+    res.status(200).json(contact);
   } catch (error) {
     res.status(404).json({ message: "Not found" });
     next(error);
@@ -31,13 +31,8 @@ exports.getById = async (req, res, next) => {
 exports.addContact = async (req, res, next) => {
   const { value } = createContactValidator.validate(req.body);
 
-  const { name, email, phone } = value;
-
   try {
-    const data = await JSON.parse(await fs.readFile(contactsPath));
-    const newContact = { id: nanoid(), name, email, phone };
-    data.push(newContact);
-    await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
+    const newContact = await Contact.create(req.body);
 
     res.status(201).json(newContact);
   } catch (error) {
@@ -48,13 +43,7 @@ exports.addContact = async (req, res, next) => {
 exports.removeContact = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const data = await JSON.parse(await fs.readFile(contactsPath));
-    const index = data.findIndex((contact) => contact.id === id);
-    if (index === -1) {
-      return null;
-    }
-    const [result] = data.splice(index, 1);
-    await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
+    await Contact.findByIdAndRemove({ _id: id });
 
     res.status(200).json({ message: "contact deleted" });
   } catch (error) {
@@ -65,20 +54,37 @@ exports.removeContact = async (req, res, next) => {
 
 exports.updateContact = async (req, res, next) => {
   const { value } = createContactValidator.validate(req.body);
-  const { name, email, phone } = value;
+  const { name, email, phone, favorite } = value;
 
   const { id } = req.params;
 
   try {
-    const data = await JSON.parse(await fs.readFile(contactsPath));
-    const [contact] = data.filter((el) => el.id === id);
-    contact.name = name;
-    contact.email = email;
-    contact.phone = phone;
+    const currentContact = await Contact.findByIdAndUpdate(
+      { _id: id },
+      req.body,
+      { name, email, phone, favorite }
+    );
+    const updatedContact = Object.assign(currentContact, value);
+    res.status(201).json(updatedContact);
+  } catch (error) {
+    next(error);
+  }
+};
 
-    await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
+exports.updateStatusContact = async (req, res, next) => {
+  const { value } = updateContactStatusValidator.validate(req.body);
+  const { favorite } = value;
 
-    res.status(201).json(contact);
+  const { id } = req.params;
+
+  try {
+    const currentContact = await Contact.findByIdAndUpdate(
+      { _id: id },
+      req.body,
+      { favorite: favorite }
+    );
+    const updatedContact = Object.assign(currentContact, value);
+    res.status(201).json(updatedContact);
   } catch (error) {
     next(error);
   }
