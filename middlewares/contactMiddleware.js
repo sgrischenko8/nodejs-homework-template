@@ -1,8 +1,5 @@
-const {
-  createContactValidator,
-  updateContactStatusValidator,
-} = require("../utils/contactValidator");
-// const { validator } = require("../utils");
+const { validator } = require("../utils");
+
 const Contact = require("../models/contactModel");
 
 exports.checkContactId = async (req, res, next) => {
@@ -71,11 +68,7 @@ exports.checkAbsenceBodyInPatch = async (req, res, next) => {
 };
 
 exports.throwError = (req, res, next) => {
-  const { error } = createContactValidator.validate(req.body);
-  const { err } = updateContactStatusValidator.validate(req.body);
-  if (err) {
-    console.log(err, "errr!!!!!!!!!!!!!!");
-  }
+  const { error } = validator.createContactValidator.validate(req.body);
 
   if (error) {
     console.log(error);
@@ -97,6 +90,17 @@ exports.throwError = (req, res, next) => {
         message,
       });
     }
+  }
+  next();
+};
+
+exports.throwPatchError = (req, res, next) => {
+  const { error } = validator.updateContactStatusValidator.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
   }
   next();
 };

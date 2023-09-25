@@ -1,7 +1,4 @@
-const {
-  createContactValidator,
-  updateContactStatusValidator,
-} = require("../utils/contactValidator");
+const { validator } = require("../utils");
 
 const Contact = require("../models/contactModel");
 
@@ -29,7 +26,7 @@ exports.getById = async (req, res, next) => {
 };
 
 exports.addContact = async (req, res, next) => {
-  const { value } = createContactValidator.validate(req.body);
+  const { value } = validator.createContactValidator.validate(req.body);
 
   try {
     const newContact = await Contact.create(req.body);
@@ -53,7 +50,7 @@ exports.removeContact = async (req, res, next) => {
 };
 
 exports.updateContact = async (req, res, next) => {
-  const { value } = createContactValidator.validate(req.body);
+  const { value } = validator.createContactValidator.validate(req.body);
   const { name, email, phone, favorite } = value;
 
   const { id } = req.params;
@@ -72,7 +69,7 @@ exports.updateContact = async (req, res, next) => {
 };
 
 exports.updateStatusContact = async (req, res, next) => {
-  const { value } = updateContactStatusValidator.validate(req.body);
+  const { value } = validator.updateContactStatusValidator.validate(req.body);
   const { favorite } = value;
 
   const { id } = req.params;

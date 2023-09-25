@@ -20,7 +20,7 @@ router
   )
   .patch(
     contactMiddleware.checkAbsenceBodyInPatch,
-    contactMiddleware.throwError,
+    contactMiddleware.throwPatchError,
     contactController.updateStatusContact
   )
   .delete(contactMiddleware.checkAbsenceBody, contactController.removeContact);

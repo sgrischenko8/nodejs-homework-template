@@ -1,3 +1,3 @@
-const validators = require("./utils");
+const validator = require("./contactValidator");
 
-module.exports = { validators };
+module.exports = { validator };
