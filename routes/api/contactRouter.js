@@ -18,11 +18,14 @@ router
     contactMiddleware.throwError,
     contactController.updateContact
   )
+
+  .delete(contactMiddleware.checkAbsenceBody, contactController.removeContact);
+router
+  .route("/:contactId/favorite")
   .patch(
     contactMiddleware.checkAbsenceBodyInPatch,
+    contactMiddleware.checkContactId,
     contactMiddleware.throwPatchError,
     contactController.updateStatusContact
-  )
-  .delete(contactMiddleware.checkAbsenceBody, contactController.removeContact);
-
+  );
 module.exports = router;

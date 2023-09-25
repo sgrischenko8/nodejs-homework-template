@@ -72,11 +72,11 @@ exports.updateStatusContact = async (req, res, next) => {
   const { value } = validator.updateContactStatusValidator.validate(req.body);
   const { favorite } = value;
 
-  const { id } = req.params;
+  const { contactId } = req.params;
 
   try {
     const currentContact = await Contact.findByIdAndUpdate(
-      { _id: id },
+      { _id: contactId },
       req.body,
       { favorite: favorite }
     );

@@ -4,9 +4,9 @@ const Contact = require("../models/contactModel");
 
 exports.checkContactId = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id, contactId } = req.params;
 
-    const contact = await Contact.findOne({ _id: id });
+    const contact = await Contact.findOne({ _id: id || contactId });
 
     if (!contact) {
       return res.status(404).json({ message: "Not found" });
