@@ -1,22 +1,22 @@
-const fs = require("fs/promises");
-const { contactsPath } = require("../models/contacts");
-const { createContactValidator } = require("../utils/contactValidator");
+const { validator } = require("../utils");
+
+const Contact = require("../models/contactModel");
 
 exports.checkContactId = async (req, res, next) => {
   try {
-    const contacts = JSON.parse(await fs.readFile(contactsPath));
+    const { id, contactId } = req.params;
 
-    const { id } = req.params;
-    const contact = contacts.find((item) => item.id === id);
+    const contact = await Contact.findOne({ _id: id || contactId });
 
     if (!contact) {
       return res.status(404).json({ message: "Not found" });
     }
 
-    req.contact = contact;
-
     next();
   } catch (error) {
+    if (error.reason) {
+      return res.status(404).json({ message: "Not found" });
+    }
     console.log(error);
     res.sendStatus(500);
   }
@@ -54,8 +54,21 @@ exports.checkAbsenceBodyInPut = async (req, res, next) => {
   }
 };
 
+exports.checkAbsenceBodyInPatch = async (req, res, next) => {
+  try {
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).json({ message: "missing field favorite" });
+    }
+
+    next();
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+};
+
 exports.throwError = (req, res, next) => {
-  const { error } = createContactValidator.validate(req.body);
+  const { error } = validator.createContactValidator.validate(req.body);
 
   if (error) {
     console.log(error);
@@ -77,6 +90,17 @@ exports.throwError = (req, res, next) => {
         message,
       });
     }
+  }
+  next();
+};
+
+exports.throwPatchError = (req, res, next) => {
+  const { error } = validator.updateContactStatusValidator.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
   }
   next();
 };

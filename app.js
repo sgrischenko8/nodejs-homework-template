@@ -3,7 +3,7 @@ const logger = require("morgan");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-dotenv.config({ path: "./env" });
+dotenv.config({ path: "./environment/.env" });
 
 const contactsRouter = require("./routes/api/contactRouter");
 
