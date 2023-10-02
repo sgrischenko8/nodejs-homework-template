@@ -4,9 +4,10 @@ const Contact = require("../models/contactModel");
 
 exports.listContacts = async (req, res, next) => {
   const { _id } = req.user;
+  const { favorite } = req.query;
 
   try {
-    const contacts = await Contact.find({ owner: _id });
+    const contacts = await Contact.find({ owner: _id, favorite });
 
     res.status(200).json(contacts);
   } catch (error) {
