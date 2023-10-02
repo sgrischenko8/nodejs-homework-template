@@ -22,7 +22,6 @@ exports.checkIsEmailAlreadyUsed = async (req, res, next) => {
 };
 
 exports.checkUserData = async (req, res, next) => {
-  console.log("checkUserData");
   const { error } = userValidator.checkUserDataValidator.validate(req.body);
 
   if (error) {
@@ -50,7 +49,6 @@ exports.checkUserData = async (req, res, next) => {
 };
 
 exports.IsEmailAndPasswordFit = async (req, res, next) => {
-  console.log("IsEmailAndPasswordFit");
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -71,7 +69,6 @@ exports.IsEmailAndPasswordFit = async (req, res, next) => {
 };
 
 exports.checkToken = async (req, res, next) => {
-  console.log("checkToken");
   const token =
     req.headers.authorization?.startsWith("Bearer ") &&
     req.headers.authorization.split(" ")[1];
@@ -103,29 +100,3 @@ exports.checkToken = async (req, res, next) => {
     res.sendStatus(500);
   }
 };
-
-// exports.isUserExist = async (req, res, next) => {
-//   console.log("isUserExist");
-//   const { token } = req.params;
-//   try {
-//     // findOne(_id)
-//     // if (!user) -> 401 Not authorized, else -> del token, Status: 204 No Content
-//     // ------
-//     // passport.authenticate("jwt", { session: false }, (err, user) => {
-//     //   if (!user || err) {
-//     //     return res.status(401).json({
-//     //       status: "error",
-//     //       code: 401,
-//     //       message: "Unauthorized",
-//     //       data: "Unauthorized",
-//     //     });
-//     //   }
-//     //   req.user = user;
-//     //   next();
-//     // })(req, res, next);
-//     next();
-//   } catch (error) {
-//     console.log(error);
-//     res.sendStatus(500);
-//   }
-// };
