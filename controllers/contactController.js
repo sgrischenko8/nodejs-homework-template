@@ -10,8 +10,9 @@ exports.listContacts = async (req, res, next) => {
     let contacts = [];
     if (favorite) {
       contacts = await Contact.find({ owner: _id, favorite });
+    } else {
+      contacts = await Contact.find({ owner: _id });
     }
-    contacts = await Contact.find({ owner: _id });
 
     res.status(200).json(contacts);
   } catch (error) {
