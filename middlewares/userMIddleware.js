@@ -100,3 +100,16 @@ exports.checkToken = async (req, res, next) => {
     res.sendStatus(500);
   }
 };
+
+exports.throwPatchSubscriptionError = (req, res, next) => {
+  const { error } = userValidator.updateSubscriptionValidator.validate(
+    req.body
+  );
+
+  if (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+  next();
+};

@@ -45,12 +45,28 @@ exports.logout = async (req, res, next) => {
 };
 
 exports.getCurrentUser = async (req, res, next) => {
+  const { value } = userValidator.checkUserDataValidator.validate(req.body);
   const { token } = req.user;
   try {
     const currentUser = await User.findOne({ token });
     const { email, subscription } = currentUser;
 
     res.status(200).json({ user: { email, subscription } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.changeSubscription = async (req, res, next) => {
+  const { _id } = req.user;
+  try {
+    const currentUser = await User.findByIdAndUpdate(
+      { _id },
+      { subscription: value.subscription }
+    );
+    const { email, subscription } = currentUser;
+
+    res.status(201).json({ user: { email, subscription } });
   } catch (error) {
     next(error);
   }

@@ -7,5 +7,5 @@ exports.checkUserDataValidator = Joi.object({
 }).options({ abortEarly: false, convert: false });
 
 exports.updateSubscriptionValidator = Joi.object({
-  subscription: Joi.string().required(),
+  subscription: Joi.string().valid("starter", "pro", "business").required(),
 }).options({ abortEarly: false, convert: false });

@@ -85,7 +85,7 @@ exports.updateStatusContact = async (req, res, next) => {
     const currentContact = await Contact.findByIdAndUpdate(
       { _id: contactId },
       req.body,
-      { favorite: favorite }
+      { favorite }
     );
     const updatedContact = Object.assign(currentContact, value);
     res.status(201).json(updatedContact);

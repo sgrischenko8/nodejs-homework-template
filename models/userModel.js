@@ -15,7 +15,10 @@ const userSchema = new mongoose.Schema(
     },
     subscription: {
       type: String,
-      enum: ["starter", "pro", "business"],
+      enum: {
+        values: ["starter", "pro", "business"],
+        message: "{VALUE} is not supported",
+      },
       default: "starter",
     },
 

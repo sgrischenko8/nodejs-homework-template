@@ -23,5 +23,12 @@ router
   .route("/current")
   .get(userMiddleware.checkToken, userController.getCurrentUser);
 router.route("/logout").post(userMiddleware.checkToken, userController.logout);
+router
+  .route("/")
+  .patch(
+    userMiddleware.checkToken,
+    userMiddleware.throwPatchSubscriptionError,
+    userController.changeSubscription
+  );
 
 module.exports = router;
