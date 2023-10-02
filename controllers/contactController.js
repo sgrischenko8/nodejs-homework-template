@@ -3,8 +3,10 @@ const { contactValidator } = require("../utils");
 const Contact = require("../models/contactModel");
 
 exports.listContacts = async (req, res, next) => {
+  const { _id } = req.user;
+
   try {
-    const contacts = await Contact.find();
+    const contacts = await Contact.find({ owner: _id });
 
     res.status(200).json(contacts);
   } catch (error) {
@@ -27,9 +29,12 @@ exports.getById = async (req, res, next) => {
 
 exports.addContact = async (req, res, next) => {
   const { value } = contactValidator.createContactValidator.validate(req.body);
+  const { _id } = req.user;
 
+  const newContactWithOwner = req.body;
+  newContactWithOwner.owner = _id;
   try {
-    const newContact = await Contact.create(req.body);
+    const newContact = await Contact.create(newContactWithOwner);
 
     res.status(201).json(newContact);
   } catch (error) {
