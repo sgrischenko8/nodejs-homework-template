@@ -4,10 +4,14 @@ const Contact = require("../models/contactModel");
 
 exports.listContacts = async (req, res, next) => {
   const { _id } = req.user;
-  const { favorite } = req.query;
+  const { favorite, page, limit } = req.query;
 
   try {
-    const contacts = await Contact.find({ owner: _id, favorite });
+    let contacts = [];
+    if (favorite) {
+      contacts = await Contact.find({ owner: _id, favorite });
+    }
+    contacts = await Contact.find({ owner: _id });
 
     res.status(200).json(contacts);
   } catch (error) {
