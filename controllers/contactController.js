@@ -13,6 +13,15 @@ exports.listContacts = async (req, res, next) => {
     } else {
       contacts = await Contact.find({ owner: _id });
     }
+    if (page || limit) {
+      const paginationPage = page ? +page : 1;
+      const pagination = limit ? +limit : 5;
+      const docToSkip = (paginationPage - 1) * pagination;
+
+      contacts = await Contact.find({ owner: _id })
+        .skip(docToSkip)
+        .limit(pagination);
+    }
 
     res.status(200).json(contacts);
   } catch (error) {
