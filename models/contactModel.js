@@ -1,5 +1,6 @@
+// const User = require("./userModel");
+
 const mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
 
 const contactSchema = new mongoose.Schema(
   {
@@ -16,6 +17,10 @@ const contactSchema = new mongoose.Schema(
     favorite: {
       type: Boolean,
       default: false,
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
     },
   },
   { versionKey: false }

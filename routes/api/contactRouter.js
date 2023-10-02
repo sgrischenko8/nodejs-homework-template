@@ -2,9 +2,11 @@ const { Router } = require("express");
 
 const { contactController } = require("../../controllers");
 const { contactMiddleware } = require("../../middlewares");
+const { userMiddleware } = require("../../middlewares");
 
 const router = Router();
 
+router.use("/", userMiddleware.checkToken);
 router
   .route("/")
   .get(contactMiddleware.checkAbsenceBody, contactController.listContacts)

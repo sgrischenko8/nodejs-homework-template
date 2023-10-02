@@ -1,3 +1,4 @@
-const validator = require("./contactValidator");
+const contactValidator = require("./contactValidator");
+const userValidator = require("./userValidator");
 
-module.exports = { validator };
+module.exports = { contactValidator, userValidator };
