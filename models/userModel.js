@@ -22,7 +22,10 @@ const userSchema = new mongoose.Schema(
       default: "starter",
     },
 
-    token: String,
+    token: {
+      type: String,
+      default: "",
+    },
   },
   { versionKey: false }
 );

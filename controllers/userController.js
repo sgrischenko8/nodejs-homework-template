@@ -33,10 +33,9 @@ exports.login = async (req, res, next) => {
 };
 
 exports.logout = async (req, res, next) => {
-  const { token } = req.user;
+  const { _id } = req.user;
   try {
-    const user = await User.findOne({ token });
-    user.set("token", undefined, { strict: false });
+    await User.findByIdAndUpdate(_id, { token: "" });
 
     res.status(204).json();
   } catch (error) {
