@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config({ path: "./environment/.env" });
 
 const contactsRouter = require("./routes/api/contactRouter");
+const userRouter = require("./routes/api/userRouter");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 //--------------------------
 
+app.use("/users", userRouter);
 app.use("/api/contacts", contactsRouter);
 app.all("*", (req, res) => {
   res.status(404).json({ message: "Bad request. Page not found" });
