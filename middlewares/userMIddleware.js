@@ -74,7 +74,6 @@ exports.IsEmailAndPasswordFit = async (req, res, next) => {
 };
 
 exports.checkToken = async (req, res, next) => {
-  // console.log(req);
   const token =
     req.headers.authorization?.startsWith("Bearer ") &&
     req.headers.authorization.split(" ")[1];
@@ -94,7 +93,6 @@ exports.checkToken = async (req, res, next) => {
     const user = await User.findOne({ _id: userId });
     if (user && user.token === token) {
       req.user = user;
-      // console.log(req.user);
     } else {
       return res.status(401).json({
         message: "Not authorized",
@@ -137,8 +135,8 @@ const multerFilter = (req, file, callback) => {
     callback(null, true);
   } else {
     callback(
-      res.status(401).json({
-        message: "Not authorized",
+      res.status(400).json({
+        message: "Incorrect type of image. Please, upload image-file!",
       })
     );
   }
@@ -152,8 +150,8 @@ exports.uploadUserAvatar = multer({
 
 exports.checkAbsenceFile = (req, res, next) => {
   if (!req.file) {
-    return res.status(401).json({
-      message: "Not authorized",
+    return res.status(400).json({
+      message: "Please, upload file!",
     });
   }
 

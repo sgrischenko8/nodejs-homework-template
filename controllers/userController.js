@@ -75,10 +75,10 @@ exports.changeSubscription = async (req, res, next) => {
 
 exports.updateAvatar = async (req, res, next) => {
   const { _id } = req.user;
-
+  console.log(req.file);
   let avatar = "";
   if (req.file) {
-    avatar = req.file.path.replace("public/", "/");
+    avatar = req.file.path.replace("tmp", "avatars");
   }
   try {
     if (avatar === "") throw error;
