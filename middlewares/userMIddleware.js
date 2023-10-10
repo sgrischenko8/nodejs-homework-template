@@ -4,6 +4,11 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { extractId } = require("../services/jwtService");
 
+const multer = require("multer");
+const Jimp = require("jimp");
+
+const { unlink } = require("node:fs");
+
 exports.checkIsEmailAlreadyUsed = async (req, res, next) => {
   const { email } = req.body;
 
@@ -111,5 +116,54 @@ exports.throwPatchSubscriptionError = (req, res, next) => {
       message: error.message,
     });
   }
+  next();
+};
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "tmp");
+  },
+  filename: (req, file, callback) => {
+    const extension = file.mimetype.split("/")[1];
+
+    callback(null, `${req.user.id}-${Date.now()}.${extension}`);
+  },
+});
+
+const multerFilter = (req, file, callback) => {
+  if (file.mimetype.startsWith("image/")) {
+    callback(null, true);
+  } else {
+    callback(
+      res.status(400).json({
+        message: "Incorrect type of image. Please, upload image-file!",
+      })
+    );
+  }
+};
+
+exports.uploadUserAvatar = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+  limits: { fileSize: 2 * 1024 * 1024 },
+}).single("avatarURL");
+
+exports.checkAbsenceFile = (req, res, next) => {
+  if (!req.file) {
+    return res.status(400).json({
+      message: "Please, upload file!",
+    });
+  }
+
+  next();
+};
+
+exports.resizeUserAvatar = async (req, res, next) => {
+  const avatar = await Jimp.read(req.file.path);
+  avatar.resize(250, 250).write(req.file.path.replace("tmp", "public/avatars"));
+
+  unlink(req.file.path, (err) => {
+    if (err) throw err;
+  });
   next();
 };

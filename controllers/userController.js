@@ -61,11 +61,30 @@ exports.changeSubscription = async (req, res, next) => {
   try {
     const currentUser = await User.findByIdAndUpdate(
       { _id },
-      { subscription: value.subscription }
+      { subscription: req.body.subscription }
     );
-    const { email, subscription } = currentUser;
+    const { email } = currentUser;
 
-    res.status(201).json({ user: { email, subscription } });
+    res
+      .status(201)
+      .json({ user: { email, subscription: req.body.subscription } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateAvatar = async (req, res, next) => {
+  const { _id } = req.user;
+  console.log(req.file);
+  let avatar = "";
+  if (req.file) {
+    avatar = req.file.path.replace("tmp", "avatars");
+  }
+  try {
+    if (avatar === "") throw error;
+    await User.findByIdAndUpdate(_id, { avatarURL: avatar });
+
+    res.status(200).json({ avatarURL: avatar });
   } catch (error) {
     next(error);
   }
