@@ -239,3 +239,4 @@ exports.checkResendVerificationRequest = async (req, res, next) => {
     res.sendStatus(500);
   }
 };
+
