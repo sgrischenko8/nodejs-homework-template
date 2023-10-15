@@ -50,4 +50,5 @@ router
   .route("/verify/:verificationToken")
   .get(userMiddleware.checkVerificationToken, userController.verify);
 
+
 module.exports = router;
