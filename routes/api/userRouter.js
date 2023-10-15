@@ -15,6 +15,7 @@ router
 router
   .route("/login")
   .post(
+    userMiddleware.checkVerification,
     userMiddleware.checkUserData,
     userMiddleware.IsEmailAndPasswordFit,
     userController.login
@@ -30,5 +31,13 @@ router
     userMiddleware.throwPatchSubscriptionError,
     userController.changeSubscription
   );
-
+router
+  .route("/verify")
+  .post(
+    userMiddleware.checkResendVerificationRequest,
+    userController.resendVerificationRequest
+  );
+router
+  .route("/verify/:verificationToken")
+  .get(userMiddleware.checkVerificationToken, userController.verify);
 module.exports = router;

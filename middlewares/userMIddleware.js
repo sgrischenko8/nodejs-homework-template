@@ -113,3 +113,75 @@ exports.throwPatchSubscriptionError = (req, res, next) => {
   }
   next();
 };
+
+exports.checkVerificationToken = async (req, res, next) => {
+  const { verificationToken } = req.params;
+
+  try {
+    const verificatedUser = await User.findOne({ verificationToken });
+
+    if (!verificatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    req.user = verificatedUser;
+    next();
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+};
+
+exports.checkVerification = async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (user.verify !== true) {
+      return res.status(401).json({
+        message: "Access denied",
+      });
+    }
+    req.user = user;
+
+    next();
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+};
+
+exports.checkResendVerificationRequest = async (req, res, next) => {
+  const { error } = userValidator.resendVerificationRequestValidator.validate(
+    req.body
+  );
+  if (error?.message === '"email" is required') {
+    return res.status(400).json({
+      message: "missing required field email",
+    });
+  }
+  if (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (user.verify === true) {
+      return res.status(400).json({
+        message: "Verification has already been passed",
+      });
+    }
+    req.user = user;
+
+    next();
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+};
