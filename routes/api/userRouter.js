@@ -32,6 +32,15 @@ router
     userController.changeSubscription
   );
 router
+  .route("/avatars")
+  .patch(
+    userMiddleware.checkToken,
+    userMiddleware.uploadUserAvatar,
+    userMiddleware.checkAbsenceFile,
+    userMiddleware.resizeUserAvatar,
+    userController.updateAvatar
+  );
+router
   .route("/verify")
   .post(
     userMiddleware.checkResendVerificationRequest,
