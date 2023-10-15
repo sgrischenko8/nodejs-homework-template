@@ -4,6 +4,11 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { extractId } = require("../services/jwtService");
 
+const multer = require("multer");
+const Jimp = require("jimp");
+
+const { unlink } = require("node:fs");
+
 exports.checkIsEmailAlreadyUsed = async (req, res, next) => {
   const { email } = req.body;
 
